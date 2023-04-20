@@ -20,7 +20,7 @@ const todoStore = useTodoStore();
     </div>
 
     <transition-group name="slide-fade" tag="div" class="todo-list">
-      <TodoDetails v-for="todo in todoStore.getTodos" :key="todo.id" :todo="todo" />
+      <TodoDetails v-for="todo in todoStore.filteredTodos" :key="todo.id" :todo="todo" />
     </transition-group>
   </main>
 </template>
@@ -81,10 +81,6 @@ body {
 .slide-fade-leave-to {
   transform: translateX(50px);
   opacity: 0;
-}
-
-.slide-fade-leave-active {
-  position: absolute;
 }
 
 /* 
