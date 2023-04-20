@@ -5,61 +5,70 @@ import { ref, computed } from 'vue';
 
 export const useTodoStore = defineStore('todoStore', () => {
   const localStorageTodo = useLocalStorage('todos', []);
+
   const todos = ref(localStorageTodo.value);
   const searchWord = ref('');
 
   const filteredTodos = computed(() => {
     return searchWord.value.length > 0
-      ? todos.value.filter(({ text }) => [text].some((text) => text.includes(searchWord.value)))
+      ? todos.value.filter((todo) => todo.text.includes(searchWord.value))
       : todos.value;
   });
+
+  const todo = (todoId) => {
+    return todos.value.find((todo) => todo.id === todoId);
+  };
 
   function addTodo(todo) {
     todo.date = dayjs(todo.date).format('YYYY-MM-DD');
     todos.value.push(todo);
 
-    localStorageTodo.value = JSON.parse(JSON.stringify(todos.value));
+    localStorageTodo.value = todos.value;
   }
 
   function removeTodo(todoId) {
-    todos.value = todos.value.filter(({ id }) => [id].some((id) => id !== todoId));
+    todos.value = todos.value.filter((todo) => todo.id !== todoId);
 
     localStorageTodo.value = todos.value;
   }
 
   function toggleCheck(todoId) {
-    const todo = todos.value.find(({ id }) => [id].some((id) => id === todoId));
-    todo.isDone = !todo.isDone;
+    todo(todoId).isDone = !todo(todoId).isDone;
+
+    localStorageTodo.value = todos.value;
   }
 
   function editDate(todoId, date) {
-    const todo = todos.value.find(({ id }) => [id].some((id) => id === todoId));
-    todo.date = dayjs(date).format('YYYY-MM-DD');
+    todo(todoId).date = dayjs(date).format('YYYY-MM-DD');
+
+    localStorageTodo.value = todos.value;
   }
 
   function editText(todoId, text) {
-    const todo = todos.value.find(({ id }) => [id].some((id) => id === todoId));
-    todo.text = text;
+    todo(todoId).text = text;
+
+    localStorageTodo.value = todos.value;
   }
 
   function editColor(todoId, color) {
-    const todo = todos.value.find(({ id }) => [id].some((id) => id === todoId));
-    todo.background = color;
+    todo(todoId).background = color;
+
+    localStorageTodo.value = todos.value;
   }
 
   function moveTodo(todoId, moveValue) {
-    const index = todos.value.findIndex(({ id }) => [id].some((id) => id === todoId));
-    const todo = todos.value.find(({ id }) => [id].some((id) => id === todoId));
+    const index = todos.value.findIndex((todo) => todo.id === todoId);
 
     let newPosition = index + moveValue;
 
     const movedTodos = JSON.parse(JSON.stringify(todos.value));
-    if (newPosition >= todos.value.length) newPosition = todos.value.length;
+    if (index === 0 || newPosition >= todos.value.length) newPosition = todos.value.length;
 
     movedTodos.splice(index, 1);
-    movedTodos.splice(newPosition, 0, JSON.parse(JSON.stringify(todo)));
+    movedTodos.splice(newPosition, 0, todo(todoId));
 
     todos.value = movedTodos;
+    localStorageTodo.value = todos.value;
   }
 
   function resetSearchWord() {
