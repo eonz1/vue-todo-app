@@ -79,24 +79,7 @@ body {
 
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateX(50px);
+  transform: translateX(30px);
   opacity: 0;
 }
-
-/* 
-.fade-move,
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
-}
-
-.fade-leave-active {
-  position: absolute;
-} */
 </style>
